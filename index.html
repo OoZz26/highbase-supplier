@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Highbase — Review Products</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Highbase brand palette */
+  --bg:           #FFFFFF;
+  --surface:      #F4F7FB;
+  --surface-2:    #EAF1F8;
+  --card:         #FFFFFF;
+  --border:       #E2E8F0;
+  --border-soft:  #EDF2F7;
+
+  --primary:      #1E5BB8;
+  --primary-dk:   #164A99;
+  --primary-lt:   #E8F0FB;
+  --primary-soft: #DCE9F8;
+
+  --ink:          #0F1E36;
+  --ink-2:        #2D3E5C;
+  --ink-3:        #5A6B85;
+  --ink-4:        #94A3B8;
+
+  --accent:       #1E5BB8;
+  --success:      #16A34A;
+  --success-lt:   #DCFCE7;
+  --warning:      #D97706;
+  --warning-lt:   #FEF3C7;
+  --danger:       #DC2626;
+  --danger-lt:    #FEE2E2;
+
+  --shadow-sm:    0 1px 2px rgba(15, 30, 54, .04);
+  --shadow:       0 4px 16px rgba(15, 30, 54, .06), 0 1px 2px rgba(15, 30, 54, .04);
+  --shadow-lg:    0 12px 32px rgba(15, 30, 54, .10), 0 1px 2px rgba(15, 30, 54, .04);
+  --shadow-blue:  0 8px 24px rgba(30, 91, 184, .25);
+
+  --r:            14px;
+  --r-sm:         10px;
+  --r-pill:       999px;
+
+  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Manrope', 'Inter', sans-serif;
+}
+
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255, 255, 255, .92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+}
+.header-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.logo {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 800;
+  color: var(--primary);
+  letter-spacing: .02em;
+  display: flex; align-items: baseline; gap: 8px;
+  flex-shrink: 0;
+}
+.logo-tag {
+  font-size: 9px; font-weight: 600; letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--ink-4); padding-left: 8px;
+  border-left: 1px solid var(--border);
+  white-space: nowrap;
+}
+.product-count {
+  font-size: 12px; font-weight: 600; color: var(--primary);
+  background: var(--primary-lt);
+  padding: 6px 14px; border-radius: var(--r-pill);
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.product-count::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--primary); border-radius: 50%;
+}
+
+@media (max-width: 480px) {
+  header { padding: 12px 16px; }
+  .logo { font-size: 18px; gap: 6px; }
+  .logo-tag { display: none; }
+  .product-count { font-size: 11px; padding: 5px 11px; }
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero {
+  max-width: 720px; margin: 0 auto;
+  padding: 36px 20px 24px;
+  animation: fadeUp .5s ease both;
+  text-align: center;
+}
+.hero p { margin-left: auto; margin-right: auto; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--primary);
+  background: var(--primary-lt);
+  padding: 6px 14px; border-radius: var(--r-pill);
+  margin-bottom: 14px;
+}
+.hero-eyebrow svg { color: var(--primary); }
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 6vw, 36px);
+  line-height: 1.15; font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+}
+.hero p {
+  font-size: 15px; color: var(--ink-3);
+  line-height: 1.6; max-width: 520px;
+}
+
+/* ── Progress ─────────────────────────────────────────────────────────── */
+.progress-wrap {
+  max-width: 720px; margin: 0 auto;
+  padding: 0 20px 24px;
+  animation: fadeUp .5s .1s ease both;
+}
+
+@media (max-width: 600px) {
+  .progress-wrap { padding: 0 16px 20px; }
+  .hero { padding: 24px 16px 18px; }
+  .hero h1 { font-size: 22px; }
+  .hero p { font-size: 14px; }
+}
+.progress-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 16px;
+}
+.progress-icon {
+  width: 40px; height: 40px; border-radius: var(--r-sm);
+  background: var(--primary-lt);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.progress-info { flex: 1; }
+.progress-info .label {
+  font-size: 12px; color: var(--ink-3); margin-bottom: 4px;
+  display: flex; justify-content: space-between;
+}
+.progress-info .label strong { color: var(--ink); font-weight: 700; }
+.progress-track {
+  height: 6px; background: var(--surface-2);
+  border-radius: var(--r-pill); overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--primary), #2C7BD9);
+  border-radius: var(--r-pill);
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────── */
+.cards-wrap {
+  max-width: 1280px; margin: 0 auto;
+  padding: 0 20px 140px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .cards-wrap {
+    grid-template-columns: 1fr;
+    padding: 0 16px 140px;
+    gap: 12px;
+  }
+}
+
+.product-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .25s, box-shadow .25s, transform .25s;
+  animation: fadeUp .4s ease both;
+}
+.product-card:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--primary-soft);
+}
+.product-card.confirmed {
+  border-color: rgba(22, 163, 74, .3);
+  background: linear-gradient(180deg, rgba(220, 252, 231, .25) 0%, var(--card) 100%);
+}
+.product-card:nth-child(1){animation-delay:.05s}
+.product-card:nth-child(2){animation-delay:.10s}
+.product-card:nth-child(3){animation-delay:.15s}
+.product-card:nth-child(4){animation-delay:.20s}
+.product-card:nth-child(5){animation-delay:.25s}
+.product-card:nth-child(6){animation-delay:.30s}
+
+/* Card top: image + meta */
+.card-top {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+@media (max-width: 480px) {
+  .card-top { grid-template-columns: 100px 1fr; }
+}
+
+.image-section {
+  position: relative;
+  background: var(--surface);
+  border-right: 1px solid var(--border-soft);
+  display: flex; flex-direction: column;
+}
+.image-frame {
+  width: 100%; height: 110px;
+  position: relative; overflow: hidden;
+  background: var(--surface-2);
+}
+@media (max-width: 480px) { .image-frame { height: 100px; } }
+.image-frame img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+}
+.image-frame:hover img { transform: scale(1.05); }
+.image-fallback {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 6px; color: var(--ink-4);
+  background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface) 100%);
+}
+.image-fallback span { font-size: 10px; font-weight: 500; }
+
+.image-overlay {
+  position: absolute; bottom: 8px; right: 8px;
+  background: rgba(15, 30, 54, .75);
+  backdrop-filter: blur(8px);
+  color: white; font-size: 10px; font-weight: 600;
+  padding: 4px 10px; border-radius: var(--r-pill);
+  display: flex; align-items: center; gap: 4px;
+  cursor: pointer;
+  transition: all .2s;
+  border: 1px solid rgba(255, 255, 255, .15);
+}
+.image-overlay:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.image-overlay svg { width: 11px; height: 11px; }
+
+.image-input { display: none; }
+
+/* Card meta column */
+.card-meta-col {
+  padding: 16px 18px;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+.card-number {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-4);
+  margin-bottom: 6px;
+}
+.card-name {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 700;
+  color: var(--ink); line-height: 1.25;
+  margin-bottom: 8px;
+  word-break: break-word;
+  letter-spacing: -.01em;
+}
+.card-summary {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.summary-chip {
+  font-size: 11px; font-weight: 500;
+  background: var(--surface);
+  color: var(--ink-2);
+  padding: 4px 10px; border-radius: var(--r-pill);
+  border: 1px solid var(--border-soft);
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.summary-chip svg { color: var(--ink-4); }
+
+.confirmed-tag {
+  display: none; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600;
+  color: var(--success);
+  background: var(--success-lt);
+  padding: 5px 12px; border-radius: var(--r-pill);
+  margin-top: 8px;
+  width: fit-content;
+}
+.product-card.confirmed .confirmed-tag { display: inline-flex; }
+.product-card.confirmed .card-summary { display: none; }
+
+/* Fields */
+.card-fields {
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.field-full { grid-column: 1 / -1; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label {
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .07em;
+  color: var(--ink-3);
+}
+.field input {
+  font-family: var(--font-body);
+  font-size: 14px; font-weight: 500;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 10px 12px;
+  width: 100%; outline: none;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.field input::placeholder { color: var(--ink-4); font-weight: 400; }
+.field input:hover { border-color: var(--primary-soft); }
+.field input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30, 91, 184, .12);
+}
+.field input.changed {
+  border-color: var(--primary);
+  background: var(--primary-lt);
+}
+.product-card.confirmed .field input {
+  background: var(--surface);
+  pointer-events: none;
+  color: var(--ink-3);
+}
+
+/* Card actions */
+.card-actions {
+  padding: 0 18px 18px;
+  display: flex; gap: 10px;
+}
+
+.btn {
+  font-family: var(--font-body);
+  font-size: 13px; font-weight: 600;
+  border: none; border-radius: var(--r-sm);
+  padding: 11px 18px;
+  cursor: pointer;
+  transition: all .2s;
+  outline: none;
+  display: flex; align-items: center; gap: 7px;
+  white-space: nowrap;
+}
+.btn-primary {
+  flex: 1;
+  background: var(--primary); color: white;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(30, 91, 184, .3);
+}
+.btn-primary:hover {
+  background: var(--primary-dk);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-blue);
+}
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled {
+  background: var(--border); color: var(--ink-4);
+  cursor: not-allowed; transform: none; box-shadow: none;
+}
+.btn-primary.loading { pointer-events: none; }
+.btn-primary.loading .btn-text { display: none; }
+.btn-primary .btn-spinner {
+  display: none; width: 15px; height: 15px;
+  border: 2px solid rgba(255, 255, 255, .3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+}
+.btn-primary.loading .btn-spinner { display: block; }
+
+.btn-saved {
+  flex: 1; justify-content: center;
+  background: var(--success-lt);
+  color: var(--success);
+  border: 1px solid rgba(22, 163, 74, .2);
+  cursor: default;
+  display: none;
+}
+.product-card.confirmed .btn-primary { display: none; }
+.product-card.confirmed .btn-saved   { display: flex; }
+
+/* Voice mic button */
+.btn-mic {
+  background: var(--primary-lt);
+  color: var(--primary);
+  border: 1px solid var(--primary-soft);
+  width: 42px; height: 42px;
+  padding: 0;
+  border-radius: var(--r-sm);
+  flex-shrink: 0;
+  align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.btn-mic:hover { background: var(--primary); color: white; border-color: var(--primary); }
+.btn-mic.recording {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+  animation: micPulse 1.4s ease infinite;
+}
+.btn-mic.processing {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  pointer-events: none;
+}
+.btn-mic.processing svg { display: none; }
+.btn-mic.processing .mic-spinner {
+  display: block; width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,.3); border-top-color: white;
+  border-radius: 50%; animation: spin .6s linear infinite;
+}
+.btn-mic .mic-spinner { display: none; }
+
+@keyframes micPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, .4); }
+  50%      { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
+}
+
+/* Recording status banner inside card */
+.rec-banner {
+  display: none;
+  margin: 0 18px 14px;
+  padding: 10px 14px;
+  background: var(--danger-lt);
+  border: 1px solid rgba(220, 38, 38, .2);
+  border-radius: var(--r-sm);
+  align-items: center; justify-content: space-between;
+  gap: 10px;
+  animation: fadeUp .3s ease;
+}
+.rec-banner.show { display: flex; }
+.rec-banner-left {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12px; font-weight: 600; color: var(--danger);
+}
+.rec-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--danger);
+  animation: recDot 1s ease infinite;
+}
+@keyframes recDot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .35; }
+}
+.rec-timer {
+  font-family: 'SF Mono', Monaco, monospace;
+  font-size: 13px; font-weight: 600;
+  color: var(--danger);
+  font-variant-numeric: tabular-nums;
+}
+.rec-stop-btn {
+  background: var(--danger); color: white;
+  border: none; border-radius: var(--r-pill);
+  padding: 6px 14px; font-size: 12px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; gap: 5px;
+  transition: background .2s;
+}
+.rec-stop-btn:hover { background: #B91C1C; }
+
+/* AI hint banner — shows what was transcribed */
+.ai-hint {
+  display: none;
+  margin: 0 18px 14px;
+  padding: 10px 14px;
+  background: var(--primary-lt);
+  border: 1px solid var(--primary-soft);
+  border-radius: var(--r-sm);
+  font-size: 12px; color: var(--primary);
+  animation: fadeUp .3s ease;
+}
+.ai-hint.show { display: block; }
+.ai-hint strong { font-weight: 700; }
+.ai-hint .hint-text { color: var(--ink-2); font-weight: 400; margin-top: 2px; font-size: 12px; line-height: 1.5; }
+.ai-hint .hint-close {
+  float: right; background: none; border: none; color: var(--ink-3);
+  cursor: pointer; padding: 0 0 0 8px; font-size: 14px;
+}
+
+/* Field highlight when AI updates it */
+.field input.ai-updated {
+  border-color: var(--primary);
+  background: var(--primary-lt);
+  animation: aiPulse .8s ease;
+}
+@keyframes aiPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(30, 91, 184, .4); }
+  100% { box-shadow: 0 0 0 8px rgba(30, 91, 184, 0); }
+}
+
+/* ── Bottom action bar ────────────────────────────────────────────────── */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  background: rgba(255, 255, 255, .96);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  padding: 14px 20px;
+  box-shadow: 0 -4px 24px rgba(15, 30, 54, .06);
+}
+.bottom-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+.bottom-info strong {
+  font-family: var(--font-display);
+  font-size: 16px; font-weight: 700;
+  color: var(--ink); display: block;
+}
+.bottom-info span { font-size: 12px; color: var(--ink-3); }
+
+.btn-confirm-all {
+  font-family: var(--font-body);
+  font-size: 14px; font-weight: 600;
+  background: var(--primary); color: white;
+  border: none; border-radius: var(--r-pill);
+  padding: 12px 26px; cursor: pointer;
+  transition: all .2s; white-space: nowrap;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: var(--shadow-blue);
+}
+.btn-confirm-all:hover { background: var(--primary-dk); transform: translateY(-1px); }
+.btn-confirm-all:disabled {
+  background: var(--border); color: var(--ink-4);
+  cursor: not-allowed; transform: none; box-shadow: none;
+}
+
+/* ── State screens ────────────────────────────────────────────────────── */
+#loadingScreen {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 70vh; gap: 18px;
+}
+.loader {
+  width: 44px; height: 44px;
+  border: 3px solid var(--surface-2); border-top-color: var(--primary);
+  border-radius: 50%; animation: spin .8s linear infinite;
+}
+#loadingScreen p { font-size: 14px; color: var(--ink-3); }
+
+#emptyScreen, #errorScreen, #successScreen {
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 70vh; text-align: center;
+  padding: 40px 20px; gap: 14px;
+}
+.state-icon {
+  width: 72px; height: 72px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 8px;
+}
+.empty-icon   { background: var(--surface-2); }
+.error-icon   { background: var(--danger-lt); }
+.success-icon-big { background: var(--success-lt); width: 88px; height: 88px;
+  animation: pop .4s .1s cubic-bezier(.34,1.56,.64,1) both; }
+
+#emptyScreen h2, #errorScreen h2, #successScreen h2 {
+  font-family: var(--font-display);
+  font-size: 24px; font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -.01em;
+}
+#successScreen h2 { font-size: 30px; }
+#emptyScreen p, #errorScreen p, #successScreen p {
+  font-size: 14px; color: var(--ink-3); max-width: 360px; line-height: 1.6;
+}
+
+.success-list {
+  width: 100%; max-width: 440px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden;
+  margin-top: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.success-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.success-row:last-child { border-bottom: none; }
+.success-row-left { text-align: left; flex: 1; }
+.success-row-name {
+  font-weight: 600; color: var(--ink); font-size: 14px;
+}
+.success-row-detail { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+.success-check {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--success); color: white;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Toast ────────────────────────────────────────────────────────────── */
+#toast {
+  position: fixed; bottom: 90px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  z-index: 200; padding: 12px 20px;
+  border-radius: var(--r-pill); font-size: 13px; font-weight: 600;
+  white-space: nowrap;
+  opacity: 0; transition: all .3s; pointer-events: none;
+  box-shadow: var(--shadow-lg);
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#toast.success { background: var(--success); color: white; }
+#toast.error   { background: var(--danger); color: white; }
+#toast.info    { background: var(--ink); color: white; }
+
+/* ── Animations ───────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pop {
+  from { opacity: 0; transform: scale(.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 420px) {
+  .card-fields { grid-template-columns: 1fr; }
+  .field-full { grid-column: 1; }
+  .hero { padding: 28px 20px 18px; }
+  .hero h1 { font-size: 24px; }
+  .progress-card { padding: 12px 16px; gap: 12px; }
+  .progress-icon { width: 36px; height: 36px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      HIGHBASE
+      <span class="logo-tag">Where You Grow</span>
+    </div>
+    <div class="product-count" id="productCount">Loading...</div>
+  </div>
+</header>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Loading -->
+<div id="loadingScreen">
+  <div class="loader"></div>
+  <p>Loading your products...</p>
+</div>
+
+<!-- Error -->
+<div id="errorScreen">
+  <div class="state-icon error-icon">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".5" fill="#DC2626"/></svg>
+  </div>
+  <h2>Something went wrong</h2>
+  <p id="errorMsg">Could not load your products. Please try again.</p>
+</div>
+
+<!-- Empty -->
+<div id="emptyScreen">
+  <div class="state-icon empty-icon">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+  </div>
+  <h2>No products today</h2>
+  <p>No submissions found yet. Send your products via WhatsApp first.</p>
+</div>
+
+<!-- Success -->
+<div id="successScreen">
+  <div class="state-icon success-icon-big">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <h2>All confirmed!</h2>
+  <p>Your products have been saved to Highbase successfully.</p>
+  <div class="success-list" id="successList"></div>
+</div>
+
+<!-- Main -->
+<div id="mainContent" style="display:none;">
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Today's submissions
+    </div>
+    <h1>Review your products</h1>
+    <p>Verify the details below. Edit anything that needs correction, then confirm each product to save it to Highbase.</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-card">
+      <div class="progress-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E5BB8" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="progress-info">
+        <div class="label">
+          <span>Confirmation progress</span>
+          <strong id="progressText">0 / 0</strong>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards-wrap" id="cardsList"></div>
+</div>
+
+<!-- Bottom bar -->
+<div class="bottom-bar" id="bottomBar" style="display:none;">
+  <div class="bottom-inner">
+    <div class="bottom-info">
+      <strong id="bottomTitle">0 confirmed</strong>
+      <span id="bottomSub">Tap confirm on each product</span>
+    </div>
+    <button class="btn-confirm-all" id="confirmAllBtn" onclick="confirmAll()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Confirm all
+    </button>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const WEBHOOK_GET   = 'https://n8n.srv1587311.hstgr.cloud/webhook/review-data';
+const WEBHOOK_POST  = 'https://n8n.srv1587311.hstgr.cloud/webhook/review-confirm';
+const WEBHOOK_VOICE = 'https://n8n.srv1587311.hstgr.cloud/webhook/voice-update';
+
+// ── State ─────────────────────────────────────────────────────────────────
+let products  = [];
+let confirmed = new Set();
+let chatId    = null;
+
+// ── Boot ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  chatId = params.get('chat_id');
+  if (!chatId) { showError('No supplier ID found. Please ask Highbase to resend the link.'); return; }
+  loadProducts();
+});
+
+// ── Load ──────────────────────────────────────────────────────────────────
+async function loadProducts() {
+  try {
+    const res  = await fetch(`${WEBHOOK_GET}?chat_id=${encodeURIComponent(chatId)}`);
+    const data = await res.json();
+    const rows = Array.isArray(data) ? data : [data];
+    products   = rows.filter(r => r && r.product_name);
+
+    // Clean newlines that sometimes come from Google Sheets
+    products.forEach(p => {
+      if (p.product_name) p.product_name = String(p.product_name).replace(/\n/g, '').trim();
+      if (p.size)         p.size         = String(p.size).replace(/\n/g, '').trim();
+      if (p.Origin)       p.Origin       = String(p.Origin).replace(/\n/g, '').trim();
+    });
+
+    hide('loadingScreen');
+
+    if (products.length === 0) { show('emptyScreen'); return; }
+
+    document.getElementById('productCount').textContent =
+      `${products.length} product${products.length !== 1 ? 's' : ''}`;
+
+    show('mainContent');
+    show('bottomBar');
+    renderCards();
+    updateProgress();
+
+  } catch (err) {
+    console.error(err);
+    showError('Could not connect. Please check your connection and try again.');
+  }
+}
+
+// ── Convert Google Drive URLs to viewable format ──────────────────────────
+function fixImageUrl(url) {
+  if (!url) return '';
+  // Convert various Google Drive URL formats to direct image URL
+  const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (fileMatch) return `https://drive.google.com/thumbnail?id=${fileMatch[1]}&sz=w400`;
+  const ucMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (ucMatch) return `https://drive.google.com/thumbnail?id=${ucMatch[1]}&sz=w400`;
+  return url;
+}
+
+// ── Render cards ──────────────────────────────────────────────────────────
+function renderCards() {
+  const list = document.getElementById('cardsList');
+  list.innerHTML = '';
+  products.forEach((p, i) => list.appendChild(makeCard(p, i)));
+}
+
+function makeCard(p, i) {
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  card.id = `card-${i}`;
+
+  const safeImage = fixImageUrl(p.image);
+  const imgHtml   = safeImage
+    ? `<img src="${esc(safeImage)}" alt="${esc(p.product_name)}" id="img-${i}"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+    : '';
+  const fbStyle   = safeImage ? 'style="display:none"' : '';
+
+  card.innerHTML = `
+    <div class="card-top">
+      <div class="image-section">
+        <div class="image-frame">
+          ${imgHtml}
+          <div class="image-fallback" ${fbStyle}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>No image</span>
+          </div>
+          <div class="image-overlay" onclick="document.getElementById('img-input-${i}').click()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Change
+          </div>
+          <input type="file" accept="image/*" class="image-input" id="img-input-${i}" onchange="handleImageChange(event, ${i})">
+        </div>
+      </div>
+
+      <div class="card-meta-col">
+        <div>
+          <div class="card-number">Product ${i + 1}</div>
+          <div class="card-name" id="cname-${i}">${esc(p.product_name)}</div>
+        </div>
+        <div class="card-summary" id="csum-${i}">
+          ${p.size ? `<span class="summary-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>${esc(p.size)}</span>` : ''}
+          ${p.price ? `<span class="summary-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>${esc(p.price)} BD</span>` : ''}
+          ${p.Origin ? `<span class="summary-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(p.Origin)}</span>` : ''}
+        </div>
+        <div class="confirmed-tag">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirmed & saved
+        </div>
+      </div>
+    </div>
+
+    <div class="card-fields">
+      <div class="field field-full">
+        <label>Product name</label>
+        <input type="text" value="${esc(p.product_name||'')}"
+          oninput="markChanged(this);products[${i}].product_name=this.value;document.getElementById('cname-${i}').textContent=this.value">
+      </div>
+      <div class="field">
+        <label>Size</label>
+        <input type="text" value="${esc(p.size||'')}" placeholder="e.g. 5 kg"
+          oninput="markChanged(this);products[${i}].size=this.value;updateSummary(${i})">
+      </div>
+      <div class="field">
+        <label>Price (BD)</label>
+        <input type="text" value="${esc(p.price||'')}" placeholder="e.g. 3.500"
+          oninput="markChanged(this);products[${i}].price=this.value;updateSummary(${i})">
+      </div>
+      <div class="field field-full">
+        <label>Origin country</label>
+        <input type="text" value="${esc(p.Origin||'')}" placeholder="e.g. Egypt"
+          oninput="markChanged(this);products[${i}].Origin=this.value;updateSummary(${i})">
+      </div>
+    </div>
+
+    <div class="rec-banner" id="rec-${i}">
+      <div class="rec-banner-left">
+        <div class="rec-dot"></div>
+        <span>Recording</span>
+        <span class="rec-timer" id="rec-timer-${i}">0:00</span>
+      </div>
+      <button class="rec-stop-btn" onclick="stopRecording(${i})">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+        Stop
+      </button>
+    </div>
+
+    <div class="ai-hint" id="hint-${i}">
+      <button class="hint-close" onclick="document.getElementById('hint-${i}').classList.remove('show')">×</button>
+      <strong>AI heard:</strong>
+      <div class="hint-text" id="hint-text-${i}"></div>
+    </div>
+
+    <div class="card-actions">
+      <button class="btn btn-mic" id="mic-${i}" onclick="toggleRecording(${i})" title="Update with voice">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        <div class="mic-spinner"></div>
+      </button>
+      <button class="btn btn-primary" id="btn-${i}" onclick="confirmProduct(${i})">
+        <span class="btn-text">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirm product
+        </span>
+        <div class="btn-spinner"></div>
+      </button>
+      <button class="btn btn-saved">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Saved
+      </button>
+    </div>
+  `;
+  return card;
+}
+
+function markChanged(input) { input.classList.add('changed'); }
+
+// Live update the summary chips when fields change
+function updateSummary(i) {
+  const p = products[i];
+  document.getElementById(`csum-${i}`).innerHTML = `
+    ${p.size ? `<span class="summary-chip">${esc(p.size)}</span>` : ''}
+    ${p.price ? `<span class="summary-chip">${esc(p.price)} BD</span>` : ''}
+    ${p.Origin ? `<span class="summary-chip">${esc(p.Origin)}</span>` : ''}
+  `;
+}
+
+// ── Image change handler (preview only, upload happens via WhatsApp later) ─
+function handleImageChange(event, i) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById(`img-${i}`);
+    if (img) {
+      img.src = e.target.result;
+      img.style.display = 'block';
+      img.nextElementSibling.style.display = 'none';
+    }
+    products[i].image = e.target.result;
+    products[i]._newImage = true;
+    showToast('Image updated. Note: in v1 image uploads come via WhatsApp.', 'info');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Confirm single ────────────────────────────────────────────────────────
+async function confirmProduct(i) {
+  const btn = document.getElementById(`btn-${i}`);
+  btn.classList.add('loading'); btn.disabled = true;
+
+  try {
+    const p   = products[i];
+    const res = await fetch(WEBHOOK_POST, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        chat_id: chatId, row_number: p.row_number,
+        product_name: p.product_name, size: p.size,
+        price: p.price, Origin: p.Origin, image: p.image,
+        variant_en: p.variant_en, variant_ar: p.variant_ar,
+        Pack: p.Pack, Box: p.Box,
+        confirmed_at: new Date().toISOString(),
+      }),
+    });
+
+    if (!res.ok) throw new Error(res.status);
+
+    confirmed.add(i);
+    document.getElementById(`card-${i}`).classList.add('confirmed');
+    updateProgress();
+    showToast(`${p.product_name} saved`, 'success');
+
+    if (confirmed.size === products.length) setTimeout(showAllConfirmed, 800);
+
+  } catch (err) {
+    console.error(err);
+    btn.classList.remove('loading'); btn.disabled = false;
+    showToast('Could not save. Please try again.', 'error');
+  }
+}
+
+// ── Confirm all ───────────────────────────────────────────────────────────
+async function confirmAll() {
+  const pending = products.map((_,i)=>i).filter(i=>!confirmed.has(i));
+  if (!pending.length) return;
+  const btn = document.getElementById('confirmAllBtn');
+  btn.disabled = true; btn.innerHTML = 'Saving...';
+  for (const i of pending) {
+    await confirmProduct(i);
+    await new Promise(r => setTimeout(r, 300));
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Confirm all';
+}
+
+// ── Progress ──────────────────────────────────────────────────────────────
+function updateProgress() {
+  const total = products.length, done = confirmed.size;
+  const pct   = total ? Math.round(done/total*100) : 0;
+  document.getElementById('progressFill').style.width = `${pct}%`;
+  document.getElementById('progressText').textContent = `${done} / ${total}`;
+  document.getElementById('bottomTitle').textContent  = `${done} of ${total} confirmed`;
+  document.getElementById('bottomSub').textContent    =
+    done === total ? 'All done!' : `${total-done} product${total-done!==1?'s':''} remaining`;
+  document.getElementById('confirmAllBtn').disabled = done === total;
+}
+
+// ── All done ──────────────────────────────────────────────────────────────
+function showAllConfirmed() {
+  hide('mainContent'); hide('bottomBar');
+  document.getElementById('successList').innerHTML = products.map(p => `
+    <div class="success-row">
+      <div class="success-row-left">
+        <div class="success-row-name">${esc(p.product_name)}</div>
+        <div class="success-row-detail">${esc(p.size||'')} ${p.price?'· '+esc(p.price)+' BD':''} ${p.Origin?'· '+esc(p.Origin):''}</div>
+      </div>
+      <div class="success-check">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+    </div>`).join('');
+  show('successScreen');
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────
+// ── Voice recording state ─────────────────────────────────────────────────
+let mediaRecorder = null;
+let audioChunks   = [];
+let recordingFor  = null;     // index of card being recorded
+let recordingStart = 0;
+let timerInterval = null;
+
+// ── Toggle recording (start/stop) ─────────────────────────────────────────
+async function toggleRecording(i) {
+  if (recordingFor === i) {
+    stopRecording(i);
+    return;
+  }
+  if (recordingFor !== null) {
+    showToast('Already recording another product', 'error');
+    return;
+  }
+  await startRecording(i);
+}
+
+// ── Start recording ───────────────────────────────────────────────────────
+async function startRecording(i) {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    // Pick the best supported format for this browser
+    let mimeType = '';
+    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mimeType = 'audio/webm;codecs=opus';
+    else if (MediaRecorder.isTypeSupported('audio/webm'))         mimeType = 'audio/webm';
+    else if (MediaRecorder.isTypeSupported('audio/mp4'))          mimeType = 'audio/mp4';
+
+    mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+    audioChunks   = [];
+
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+      sendVoiceUpdate(i, audioBlob);
+    };
+
+    mediaRecorder.start();
+    recordingFor   = i;
+    recordingStart = Date.now();
+
+    // UI
+    document.getElementById(`mic-${i}`).classList.add('recording');
+    document.getElementById(`rec-${i}`).classList.add('show');
+    document.getElementById(`hint-${i}`).classList.remove('show');
+
+    // Live timer
+    timerInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - recordingStart) / 1000);
+      const m = Math.floor(elapsed / 60);
+      const s = (elapsed % 60).toString().padStart(2, '0');
+      document.getElementById(`rec-timer-${i}`).textContent = `${m}:${s}`;
+
+      // Auto-stop at 30 seconds
+      if (elapsed >= 30) stopRecording(i);
+    }, 200);
+
+  } catch (err) {
+    console.error('Mic error:', err);
+    if (err.name === 'NotAllowedError') {
+      showToast('Microphone permission denied', 'error');
+    } else {
+      showToast('Could not start recording', 'error');
+    }
+  }
+}
+
+// ── Stop recording ────────────────────────────────────────────────────────
+function stopRecording(i) {
+  if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
+  mediaRecorder.stop();
+  clearInterval(timerInterval);
+
+  document.getElementById(`mic-${i}`).classList.remove('recording');
+  document.getElementById(`mic-${i}`).classList.add('processing');
+  document.getElementById(`rec-${i}`).classList.remove('show');
+}
+
+// ── Send to n8n voice webhook ─────────────────────────────────────────────
+async function sendVoiceUpdate(i, audioBlob) {
+  try {
+    const p = products[i];
+
+    // Convert audio to base64 (simpler than FormData for n8n)
+    const base64 = await blobToBase64(audioBlob);
+
+    const res = await fetch(WEBHOOK_VOICE, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        chat_id:      chatId,
+        row_number:   p.row_number,
+        audio_base64: base64,
+        audio_mime:   audioBlob.type,
+        current: {
+          product_name: p.product_name || '',
+          size:         p.size         || '',
+          price:        p.price        || '',
+          Origin:       p.Origin       || '',
+        }
+      }),
+    });
+
+    if (!res.ok) throw new Error(res.status);
+    const result = await res.json();
+
+    // Apply updates to the card
+    applyVoiceUpdates(i, result);
+
+  } catch (err) {
+    console.error('Voice update error:', err);
+    showToast('Could not process voice. Try again.', 'error');
+  } finally {
+    document.getElementById(`mic-${i}`).classList.remove('processing');
+    recordingFor  = null;
+    mediaRecorder = null;
+  }
+}
+
+// ── Apply AI updates to the card fields ───────────────────────────────────
+function applyVoiceUpdates(i, result) {
+  const card = document.getElementById(`card-${i}`);
+  const fields = ['product_name', 'size', 'price', 'Origin'];
+  let updatedFields = [];
+
+  fields.forEach(field => {
+    const newVal = result[field];
+    if (newVal && String(newVal).trim() !== '') {
+      // Update state
+      products[i][field] = newVal;
+      // Update input
+      const input = card.querySelector(`input[oninput*="${field}"]`);
+      if (input) {
+        input.value = newVal;
+        input.classList.add('ai-updated', 'changed');
+      }
+      updatedFields.push(field);
+    }
+  });
+
+  // Update title and summary
+  document.getElementById(`cname-${i}`).textContent = products[i].product_name || 'New product';
+  updateSummary(i);
+
+  // Show what AI heard
+  if (result.transcript) {
+    document.getElementById(`hint-text-${i}`).textContent = `"${result.transcript}"`;
+    document.getElementById(`hint-${i}`).classList.add('show');
+  }
+
+  if (updatedFields.length > 0) {
+    showToast(`Updated ${updatedFields.length} field${updatedFields.length !== 1 ? 's' : ''}`, 'success');
+  } else {
+    showToast('No changes detected', 'info');
+  }
+}
+
+// ── Helper: blob → base64 ─────────────────────────────────────────────────
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(',')[1]);  // strip data:...;base64,
+    reader.onerror   = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────
+function show(id) { document.getElementById(id).style.display = 'flex'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+function showError(msg) { hide('loadingScreen'); document.getElementById('errorMsg').textContent = msg; show('errorScreen'); }
+function esc(s)  { return String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+let tt;
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(tt);
+  tt = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
