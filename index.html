@@ -144,15 +144,12 @@ header {
 /* ── Progress ─────────────────────────────────────────────────────────── */
 .progress-wrap {
   max-width: 720px; margin: 0 auto;
-  padding: 0 20px 24px;
+  padding: 28px 20px 24px;
   animation: fadeUp .5s .1s ease both;
 }
 
 @media (max-width: 600px) {
-  .progress-wrap { padding: 0 16px 20px; }
-  .hero { padding: 24px 16px 18px; }
-  .hero h1 { font-size: 22px; }
-  .hero p { font-size: 14px; }
+  .progress-wrap { padding: 20px 16px; }
 }
 .progress-card {
   background: var(--card);
@@ -730,15 +727,6 @@ header {
 
 <!-- Main -->
 <div id="mainContent" style="display:none;">
-  <div class="hero">
-    <div class="hero-eyebrow">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-      Today's submissions
-    </div>
-    <h1>Review your products</h1>
-    <p>Verify the details below. Edit anything that needs correction, then confirm each product to save it to Highbase.</p>
-  </div>
-
   <div class="progress-wrap">
     <div class="progress-card">
       <div class="progress-icon">
@@ -800,6 +788,9 @@ async function loadProducts() {
     const rows = Array.isArray(data) ? data : [data];
     products   = rows.filter(r => r && r.product_name);
 
+    // Debug: log to screen for mobile debugging
+    console.log('Loaded products:', products.length, products);
+
     // Clean newlines that sometimes come from Google Sheets
     products.forEach(p => {
       if (p.product_name) p.product_name = String(p.product_name).replace(/\n/g, '').trim();
@@ -816,12 +807,16 @@ async function loadProducts() {
 
     show('mainContent');
     show('bottomBar');
-    renderCards();
-    updateProgress();
+
+    // Wait a tick for DOM to be visible before rendering cards
+    setTimeout(() => {
+      renderCards();
+      updateProgress();
+    }, 50);
 
   } catch (err) {
-    console.error(err);
-    showError('Could not connect. Please check your connection and try again.');
+    console.error('Load error:', err);
+    showError('Could not connect: ' + (err.message || err));
   }
 }
 
@@ -1268,7 +1263,12 @@ function blobToBase64(blob) {
 }
 
 // ── Utils ─────────────────────────────────────────────────────────────────
-function show(id) { document.getElementById(id).style.display = 'flex'; }
+function show(id) {
+  const el = document.getElementById(id);
+  // Use block for content containers, flex for centered state screens
+  const useBlock = ['mainContent'].includes(id);
+  el.style.display = useBlock ? 'block' : 'flex';
+}
 function hide(id) { document.getElementById(id).style.display = 'none'; }
 function showError(msg) { hide('loadingScreen'); document.getElementById('errorMsg').textContent = msg; show('errorScreen'); }
 function esc(s)  { return String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
