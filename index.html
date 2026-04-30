@@ -185,19 +185,22 @@ header {
 
 /* ── Cards ────────────────────────────────────────────────────────────── */
 .cards-wrap {
-  max-width: 1280px; margin: 0 auto;
+  max-width: 1280px;
+  margin: 0 auto;
   padding: 0 20px 140px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 16px;
   width: 100%;
+  box-sizing: border-box;
 }
 
 @media (max-width: 600px) {
   .cards-wrap {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     padding: 0 16px 140px;
     gap: 12px;
+    max-width: 100%;
   }
 }
 
@@ -209,6 +212,8 @@ header {
   box-shadow: var(--shadow-sm);
   transition: border-color .25s, box-shadow .25s, transform .25s;
   animation: fadeUp .4s ease both;
+  min-width: 0;
+  width: 100%;
 }
 .product-card:hover {
   box-shadow: var(--shadow);
@@ -422,6 +427,9 @@ header {
 }
 .product-card.confirmed .btn-primary { display: none; }
 .product-card.confirmed .btn-saved   { display: flex; }
+.product-card.confirmed .btn-mic     { display: none; }
+.product-card.confirmed .image-overlay { display: none; }
+.product-card.confirmed .image-input { pointer-events: none; }
 
 /* Voice mic button */
 .btn-mic {
@@ -832,7 +840,12 @@ function fixImageUrl(url) {
 function renderCards() {
   const list = document.getElementById('cardsList');
   list.innerHTML = '';
-  products.forEach((p, i) => list.appendChild(makeCard(p, i)));
+  try {
+    products.forEach((p, i) => list.appendChild(makeCard(p, i)));
+  } catch (err) {
+    console.error('Render error:', err);
+    list.innerHTML = `<div style="padding:20px;color:#DC2626;text-align:center;">Error rendering products: ${err.message}</div>`;
+  }
 }
 
 function makeCard(p, i) {
@@ -957,6 +970,11 @@ function updateSummary(i) {
 
 // ── Image change handler (preview only, upload happens via WhatsApp later) ─
 function handleImageChange(event, i) {
+  if (confirmed.has(i)) {
+    showToast('Product already confirmed', 'info');
+    event.target.value = '';
+    return;
+  }
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
@@ -969,13 +987,34 @@ function handleImageChange(event, i) {
     }
     products[i].image = e.target.result;
     products[i]._newImage = true;
-    showToast('Image updated. Note: in v1 image uploads come via WhatsApp.', 'info');
+    showToast('Image updated', 'success');
   };
   reader.readAsDataURL(file);
 }
 
 // ── Confirm single ────────────────────────────────────────────────────────
 async function confirmProduct(i) {
+  // If currently recording on this card, stop and let voice processing finish first
+  if (recordingFor === i) {
+    showToast('Stopping recording first, please wait…', 'info');
+    stopRecording(i);
+    // Wait for the voice update to finish (sendVoiceUpdate clears recordingFor)
+    let waited = 0;
+    while (recordingFor !== null && waited < 15000) {
+      await new Promise(r => setTimeout(r, 200));
+      waited += 200;
+    }
+    // Don't auto-confirm — let the user review the AI-updated values first
+    showToast('Review the updated values, then tap Confirm again', 'info');
+    return;
+  }
+
+  // If recording on another card, ask user to finish that first
+  if (recordingFor !== null) {
+    showToast('Finish the other recording first', 'error');
+    return;
+  }
+
   const btn = document.getElementById(`btn-${i}`);
   btn.classList.add('loading'); btn.disabled = true;
 
@@ -1062,6 +1101,10 @@ let timerInterval = null;
 
 // ── Toggle recording (start/stop) ─────────────────────────────────────────
 async function toggleRecording(i) {
+  if (confirmed.has(i)) {
+    showToast('Product already confirmed', 'info');
+    return;
+  }
   if (recordingFor === i) {
     stopRecording(i);
     return;
