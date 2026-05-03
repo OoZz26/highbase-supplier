@@ -1059,11 +1059,31 @@ function handleImageChange(event, i) {
 
 // ── Confirm single ────────────────────────────────────────────────────────
 async function confirmProduct(i) {
-  // Check for validation errors
   const card = document.getElementById(`card-${i}`);
+  
+  // Check for validation errors
   const invalidInputs = card.querySelectorAll('input.invalid');
   if (invalidInputs.length > 0) {
     showToast('Please fix validation errors first', 'error');
+    return;
+  }
+  
+  // Check required fields are not empty
+  const productName = document.getElementById(`pname-${i}`).value.trim();
+  const sizeNum = document.getElementById(`size-${i}`).value.trim();
+  const sizeUnit = document.getElementById(`unit-${i}`).value;
+  const price = document.getElementById(`price-${i}`).value.trim();
+  const origin = document.getElementById(`origin-${i}`).value;
+  
+  const missingFields = [];
+  if (!productName) missingFields.push('Product name');
+  if (!sizeNum) missingFields.push('Size');
+  if (!sizeUnit) missingFields.push('Unit');
+  if (!price) missingFields.push('Price');
+  if (!origin) missingFields.push('Origin');
+  
+  if (missingFields.length > 0) {
+    showToast(`Missing: ${missingFields.join(', ')}`, 'error');
     return;
   }
 
@@ -1300,36 +1320,121 @@ async function sendVoiceUpdate(i, audioBlob) {
 
 function applyVoiceUpdates(i, result) {
   const card = document.getElementById(`card-${i}`);
-  const fields = ['product_name', 'color', 'size', 'price', 'Origin'];
   let updatedFields = [];
 
-  fields.forEach(field => {
-    const newVal = result[field];
-    if (newVal && String(newVal).trim() !== '') {
-      products[i][field] = newVal;
-      
-      if (field === 'size') {
-        // Split size into number + unit
-        const num = extractNumber(newVal);
-        const input = document.getElementById(`size-${i}`);
-        if (input) {
-          input.value = num;
-          input.classList.add('ai-updated', 'changed');
-        }
-      } else {
-        const input = document.getElementById(`${field === 'product_name' ? 'pname' : field}-${i}`);
-        if (input) {
-          input.value = newVal;
-          input.classList.add('ai-updated', 'changed');
+  // Handle product_name
+  if (result.product_name && String(result.product_name).trim() !== '') {
+    products[i].product_name = result.product_name;
+    const input = document.getElementById(`pname-${i}`);
+    if (input) {
+      input.value = result.product_name;
+      input.classList.add('ai-updated', 'changed');
+    }
+    updatedFields.push('product_name');
+  }
+
+  // Handle color
+  if (result.color && String(result.color).trim() !== '') {
+    products[i].color = result.color;
+    const input = document.getElementById(`color-${i}`);
+    if (input) {
+      input.value = result.color;
+      input.classList.add('ai-updated', 'changed');
+    }
+    updatedFields.push('color');
+  }
+
+  // Handle size - split into number + unit
+  if (result.size && String(result.size).trim() !== '') {
+    const sizeStr = String(result.size).trim();
+    const num = extractNumber(sizeStr);
+    
+    // Extract unit from the size string
+    let detectedUnit = '';
+    for (const unit of UNITS) {
+      if (sizeStr.toLowerCase().includes(unit.toLowerCase())) {
+        detectedUnit = unit;
+        break;
+      }
+    }
+    
+    // Update size number
+    if (num) {
+      const sizeInput = document.getElementById(`size-${i}`);
+      if (sizeInput) {
+        sizeInput.value = num;
+        sizeInput.classList.add('ai-updated', 'changed');
+      }
+    }
+    
+    // Update unit dropdown
+    if (detectedUnit) {
+      const unitSelect = document.getElementById(`unit-${i}`);
+      if (unitSelect) {
+        unitSelect.value = detectedUnit;
+        unitSelect.classList.add('ai-updated', 'changed');
+        products[i].sizeUnit = detectedUnit;
+      }
+    }
+    
+    products[i].sizeNum = num;
+    updatedFields.push('size');
+  }
+
+  // Handle price
+  if (result.price && String(result.price).trim() !== '') {
+    products[i].price = result.price;
+    const input = document.getElementById(`price-${i}`);
+    if (input) {
+      input.value = result.price;
+      input.classList.add('ai-updated', 'changed');
+    }
+    updatedFields.push('price');
+  }
+
+  // Handle Origin - update dropdown by matching country name
+  if (result.Origin && String(result.Origin).trim() !== '') {
+    const originValue = String(result.Origin).trim();
+    const originSelect = document.getElementById(`origin-${i}`);
+    
+    if (originSelect) {
+      // Try exact match first
+      let matched = false;
+      for (let j = 0; j < originSelect.options.length; j++) {
+        if (originSelect.options[j].value.toLowerCase() === originValue.toLowerCase()) {
+          originSelect.selectedIndex = j;
+          originSelect.classList.add('ai-updated', 'changed');
+          products[i].Origin = originSelect.options[j].value;
+          matched = true;
+          break;
         }
       }
-      updatedFields.push(field);
+      
+      // If no exact match, try partial match
+      if (!matched) {
+        for (let j = 0; j < originSelect.options.length; j++) {
+          if (originSelect.options[j].value.toLowerCase().includes(originValue.toLowerCase()) ||
+              originValue.toLowerCase().includes(originSelect.options[j].value.toLowerCase())) {
+            originSelect.selectedIndex = j;
+            originSelect.classList.add('ai-updated', 'changed');
+            products[i].Origin = originSelect.options[j].value;
+            matched = true;
+            break;
+          }
+        }
+      }
+      
+      if (matched) {
+        updatedFields.push('Origin');
+      }
     }
-  });
+  }
 
+  // Update card name and summary
   document.getElementById(`cname-${i}`).textContent = products[i].product_name || 'New product';
   updateSummary(i);
 
+  // Show what AI heard
   if (result.transcript) {
     document.getElementById(`hint-text-${i}`).textContent = `"${result.transcript}"`;
     document.getElementById(`hint-${i}`).classList.add('show');
