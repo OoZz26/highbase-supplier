@@ -442,6 +442,31 @@ header {
 .product-card.confirmed .image-overlay { display: none; }
 .product-card.confirmed .image-input { pointer-events: none; }
 
+/* Delete button */
+.btn-delete {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--ink-3);
+  border-radius: var(--r-sm);
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.btn-delete:hover {
+  background: var(--danger-lt);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.product-card.confirmed .btn-delete {
+  display: none;
+}
+
 /* Voice mic button */
 .btn-mic {
   background: var(--primary-lt);
@@ -888,9 +913,14 @@ function makeCard(p, i) {
       </div>
 
       <div class="card-meta-col">
-        <div>
-          <div class="card-number">Product ${i + 1}</div>
-          <div class="card-name" id="cname-${i}">${esc(p.product_name)}</div>
+        <div style="display:flex; justify-content:space-between; align-items:start;">
+          <div>
+            <div class="card-number">Product ${i + 1}</div>
+            <div class="card-name" id="cname-${i}">${esc(p.product_name)}</div>
+          </div>
+          <button class="btn-delete" onclick="deleteProduct(${i})" title="Delete product">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
         <div class="card-summary" id="csum-${i}">
           ${p.color ? `<span class="summary-chip">${esc(p.color)}</span>` : ''}
@@ -1055,6 +1085,38 @@ function handleImageChange(event, i) {
     showToast('Image updated', 'success');
   };
   reader.readAsDataURL(file);
+}
+
+// ── Delete product ────────────────────────────────────────────────────────
+function deleteProduct(i) {
+  if (confirmed.has(i)) {
+    showToast('Cannot delete confirmed product', 'error');
+    return;
+  }
+  
+  // Remove from products array
+  products.splice(i, 1);
+  
+  // Remove from confirmed set (shift indices down)
+  const newConfirmed = new Set();
+  confirmed.forEach(idx => {
+    if (idx < i) newConfirmed.add(idx);
+    else if (idx > i) newConfirmed.add(idx - 1);
+  });
+  confirmed = newConfirmed;
+  
+  // Re-render everything
+  renderCards();
+  updateProgress();
+  
+  showToast('Product removed', 'info');
+  
+  // If no products left, show empty screen
+  if (products.length === 0) {
+    hide('mainContent');
+    hide('bottomBar');
+    show('emptyScreen');
+  }
 }
 
 // ── Confirm single ────────────────────────────────────────────────────────
