@@ -821,13 +821,40 @@ async function loadProducts() {
     const res  = await fetch(`${WEBHOOK_GET}?chat_id=${encodeURIComponent(chatId)}`);
     const data = await res.json();
     const rows = Array.isArray(data) ? data : [data];
-    products   = rows.filter(r => r && r.product_name);
+    
+    // Map pending sheet columns to internal format
+    products = rows.filter(r => r && (r['Product Name'] || r.product_name)).map(r => ({
+      // From pending sheet
+      Date: r.Date || '',
+      Chat_ID: r.Chat_ID || '',
+      Chat_Number: r.Chat_Number || '',
+      brand_id: r.brand_id || r.barnd_id || '',
+      Brand: r.Brand || '',
+      product_group: r['product group'] || '',
+      product_name: r['Product Name'] || r.product_name || '',
+      type: r.type || '',
+      color: r.Color || r.color || '',
+      size: r.size || '',
+      Origin: r.Origin || '',
+      pack_format: r['Pack Formate'] || r.pack_format || '',
+      variant_name: r['variant name'] || r.variant_en || '',
+      image: r['image url'] || r.image || '',
+      Category: r.Category || '',
+      Pack: r.Pack || 1,
+      Box: r.Box || 1,
+      price: r.price || '',
+      // Keep row number for tracking
+      row_number: r.row_number || r.ID || ''
+    }));
 
+    // Clean newlines
     products.forEach(p => {
       if (p.product_name) p.product_name = String(p.product_name).replace(/\n/g, '').trim();
       if (p.size)         p.size         = String(p.size).replace(/\n/g, '').trim();
       if (p.Origin)       p.Origin       = String(p.Origin).replace(/\n/g, '').trim();
       if (p.color)        p.color        = String(p.color).replace(/\n/g, '').trim();
+      if (p.type)         p.type         = String(p.type).replace(/\n/g, '').trim();
+      if (p.pack_format)  p.pack_format  = String(p.pack_format).replace(/\n/g, '').trim();
     });
 
     hide('loadingScreen');
@@ -1178,22 +1205,34 @@ async function confirmProduct(i) {
     const sizeUnit = document.getElementById(`unit-${i}`).value;
     const fullSize = sizeNum && sizeUnit ? `${sizeNum} ${sizeUnit}` : sizeNum;
     
+    // Get color
+    const color = document.getElementById(`color-${i}`).value.trim();
+    
     const res = await fetch(WEBHOOK_POST, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
+        // For confirmed sheet (no Date, Chat_ID, Chat_Number)
+        brand_id: p.brand_id || p.barnd_id || '',
+        Brand: p.Brand || '',
+        Barcode: '',  // Empty for now
+        product_group: p.product_group || p.product_name,
+        Product_Name: p.product_name,
+        type: p.type || '',
+        Color: color || '',
+        size: fullSize,
+        Origin: p.Origin,
+        Pack_Formate: p.pack_format || '',
+        variant_name: p.variant_name || '',
+        image_url: p.image || '',
+        description: '',  // Empty for now
+        Category: p.Category || '',
+        Pack: p.Pack || 1,
+        Box: p.Box || 1,
+        price: p.price,
+        // For webhook processing
         chat_id: chatId,
         row_number: p.row_number,
-        product_name: p.product_name,
-        color: p.color || '',
-        size: fullSize,
-        price: p.price,
-        Origin: p.Origin,
-        image: p.image,
-        variant_en: p.variant_en,
-        variant_ar: p.variant_ar,
-        Pack: p.Pack,
-        Box: p.Box,
         confirmed_at: new Date().toISOString(),
       }),
     });
