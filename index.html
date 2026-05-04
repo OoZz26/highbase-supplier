@@ -1208,6 +1208,15 @@ async function confirmProduct(i) {
     // Get color
     const color = document.getElementById(`color-${i}`).value.trim();
     
+    // Regenerate variant_name based on current field values
+    // Format: [color] [product_name] [size] - [origin]
+    let variantParts = [];
+    if (color) variantParts.push(color);
+    variantParts.push(p.product_name);
+    if (fullSize) variantParts.push(fullSize);
+    
+    const variantName = variantParts.join(' ') + (p.Origin ? ` - ${p.Origin}` : '');
+    
     const res = await fetch(WEBHOOK_POST, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1223,7 +1232,7 @@ async function confirmProduct(i) {
         size: fullSize,
         Origin: p.Origin,
         Pack_Formate: p.pack_format || '',
-        variant_name: p.variant_name || '',
+        variant_name: variantName,
         image_url: p.image || '',
         description: '',  // Empty for now
         Category: p.Category || '',
