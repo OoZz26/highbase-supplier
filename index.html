@@ -806,12 +806,19 @@ const COUNTRIES = ['Egypt', 'India', 'Saudi Arabia', 'UAE', 'Turkey', 'Mexico', 
 let products  = [];
 let confirmed = new Set();
 let chatId    = null;
+let branchId    = null;
+  
 
 // ── Boot ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   chatId = params.get('chat_id');
+  branchId = params.get('branch_id');
+  
   if (!chatId) { showError('No supplier ID found. Please ask Highbase to resend the link.'); return; }
+  if (!branchId) { showError('No supplier Branch ID found. Please ask Highbase to resend the link.'); return; }
+
+  
   loadProducts();
 });
 
