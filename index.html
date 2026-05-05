@@ -1097,27 +1097,99 @@ function updateSummary(i) {
   `;
 }
 
-// ── Image change ──────────────────────────────────────────────────────────
+// ── Image change with auto-compression ────────────────────────────────────
 function handleImageChange(event, i) {
   if (confirmed.has(i)) {
     showToast('Product already confirmed', 'info');
     event.target.value = '';
     return;
   }
+  
   const file = event.target.files[0];
   if (!file) return;
+  
+  // Check if it's an image
+  if (!file.type.startsWith('image/')) {
+    showToast('Please upload an image file', 'error');
+    event.target.value = '';
+    return;
+  }
+  
+  // Max original size: 5MB
+  const MAX_ORIGINAL_SIZE = 5 * 1024 * 1024;
+  if (file.size > MAX_ORIGINAL_SIZE) {
+    showToast('Image too large. Please upload an image smaller than 5MB', 'error');
+    event.target.value = '';
+    return;
+  }
+  
+  showToast('Processing image...', 'info');
+  
   const reader = new FileReader();
   reader.onload = e => {
-    const img = document.getElementById(`img-${i}`);
-    if (img) {
-      img.src = e.target.result;
-      img.style.display = 'block';
-      img.nextElementSibling.style.display = 'none';
-    }
-    products[i].image = e.target.result;
-    products[i]._newImage = true;
-    showToast('Image updated', 'success');
+    const img = new Image();
+    img.onload = () => {
+      // Compress image
+      const canvas = document.createElement('canvas');
+      const MAX_WIDTH = 800;
+      const MAX_HEIGHT = 800;
+      
+      let width = img.width;
+      let height = img.height;
+      
+      // Calculate new dimensions
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height = height * (MAX_WIDTH / width);
+          width = MAX_WIDTH;
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width = width * (MAX_HEIGHT / height);
+          height = MAX_HEIGHT;
+        }
+      }
+      
+      canvas.width = width;
+      canvas.height = height;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      
+      // Compress to JPEG with 0.8 quality
+      const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+      
+      // Check final size
+      const sizeKB = (compressedBase64.length * 0.75 / 1024).toFixed(0);
+      
+      if (compressedBase64.length > 700 * 1024) {
+        showToast(`Image still too large after compression (${sizeKB}KB). Try a smaller image.`, 'error');
+        event.target.value = '';
+        return;
+      }
+      
+      // Update UI
+      const imgEl = document.getElementById(`img-${i}`);
+      if (imgEl) {
+        imgEl.src = compressedBase64;
+        imgEl.style.display = 'block';
+        imgEl.nextElementSibling.style.display = 'none';
+      }
+      
+      products[i].image = compressedBase64;
+      products[i]._newImage = true;
+      
+      showToast(`Image updated (${sizeKB}KB)`, 'success');
+    };
+    
+    img.onerror = () => {
+      showToast('Could not load image', 'error');
+      event.target.value = '';
+    };
+    
+    img.src = e.target.result;
   };
+  
   reader.readAsDataURL(file);
 }
 
