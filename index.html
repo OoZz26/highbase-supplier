@@ -1248,7 +1248,7 @@ async function confirmProduct(i) {
         price: p.price,
         // For webhook processing
         chat_id: chatId,
-        branch_id: branch_id,
+        branch_id: branchId,
         
         row_number: p.row_number,
         confirmed_at: new Date().toISOString(),
@@ -1409,7 +1409,7 @@ async function sendVoiceUpdate(i, audioBlob) {
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
         chat_id:      chatId,
-        branch_id: branch_id,
+        branch_id: branchId,
         row_number:   p.row_number,
         audio_base64: base64,
         audio_mime:   audioBlob.type,
