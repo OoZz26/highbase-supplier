@@ -560,7 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Load ──────────────────────────────────────────────────────────────────
 async function loadProducts() {
   try {
-    const res  = await fetch(`${WEBHOOK_GET}?chat_number=${encodeURIComponent(chatId)}`);
+    const res  = await fetch(`${WEBHOOK_GET}?chat_id=${encodeURIComponent(chatId)}`);
     const data = await res.json();
     const rows = Array.isArray(data) ? data : [data];
 
