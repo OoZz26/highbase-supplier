@@ -651,7 +651,7 @@ function decodeJWT(raw) {
 // ── Boot ──────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
-  token = params.get('id');
+  token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJCcmFuY2hJRCI6MTI0OSwiUGhvbmVOdW1iZXIiOjk3MzM5MzkyODI2LCJCcmFuY2hOdW1iZXIiOjk3MzM5MzkyODI2LCJCcmFuY2hTbHVnIjoibjhuLWRlbW8tMTc4MDMxMjYwMCIsIkJyYW5jaEN1cnJlbmN5IjoiQkhEIiwiaWF0IjoxNzgwNDMzNDI2fQ.UoWY6Pd8sfFxQiiRLnhRsHfJUfbU19YtqOSMLjU4Nho";
 
   // Must have token
   if (!token) {
