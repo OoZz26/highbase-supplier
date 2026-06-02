@@ -678,6 +678,8 @@ document.addEventListener('DOMContentLoaded', () => {
   chatId      = String(payload.PhoneNumber  || '');
   branchId    = String(payload.BranchID     || '');
   branchSlug  = String(payload.BranchSlug   || '');
+  branchCurrency = = String(payload.BranchCurrency || '');
+  
 
   if (!chatId) {
     showError('Could not read supplier ID from link. Please ask Highbase to resend the link.');
@@ -1131,7 +1133,7 @@ async function confirmProduct(i) {
         Pack:          p.Pack || 1,
         Box:           p.Box || 1,
         price:         price,
-        price_unit:    currency || 'BD',
+        price_unit:    currency || branchCurrency,
         chat_id:       chatId,
         branch_id:     branchId,
         row_number:    p.row_number,
