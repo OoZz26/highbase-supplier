@@ -328,7 +328,31 @@ let branchId       = null;
 let branchSlug     = null;
 let branchCurrency = null;
 let token          = null;
-let expiredPayload = null; // stored when link is expired, used for send_new_link
+let expiredPayload = null;
+let isProcessing   = false; // global lock — prevents parallel webhook calls
+
+// ── UI Lock ───────────────────────────────────────────────────────────────
+function lockUI() {
+  isProcessing = true;
+  document.querySelectorAll(
+    '.btn-delete, .btn-mic, .btn-primary, #confirmAllBtn'
+  ).forEach(el => {
+    el.disabled = true;
+    el.style.opacity = '0.45';
+    el.style.pointerEvents = 'none';
+  });
+}
+
+function unlockUI() {
+  isProcessing = false;
+  document.querySelectorAll(
+    '.btn-delete, .btn-mic, .btn-primary, #confirmAllBtn'
+  ).forEach(el => {
+    el.disabled = false;
+    el.style.opacity = '';
+    el.style.pointerEvents = '';
+  });
+}
 
 // ── JWT Decode ────────────────────────────────────────────────────────────
 function decodeJWT(raw) {
@@ -617,8 +641,9 @@ function handleImageChange(event, i) {
 }
 
 async function deleteProduct(i) {
+  if (isProcessing) { showToast('Please wait, another action is in progress', 'info'); return; }
   if (confirmed.has(i)) { showToast('Cannot delete confirmed product', 'error'); return; }
-
+  lockUI();
   const p   = products[i];
   const btn = document.querySelector('#card-' + i + ' .btn-delete');
   if (btn) { btn.disabled = true; btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'; }
@@ -673,6 +698,7 @@ async function requestNewLink() {
 }
 
 async function confirmProduct(i, skipReload) {
+  if (isProcessing && !skipReload) { showToast('Please wait, another action is in progress', 'info'); return; }
   const card = document.getElementById('card-' + i);
   if (card.querySelectorAll('input.invalid').length > 0) { showToast('Please fix validation errors first', 'error'); return; }
 
@@ -705,6 +731,7 @@ async function confirmProduct(i, skipReload) {
 
   const btn = document.getElementById('btn-' + i);
   btn.classList.add('loading'); btn.disabled = true;
+  if (!skipReload) lockUI();
 
   try {
     const p     = products[i];
@@ -747,18 +774,20 @@ async function confirmProduct(i, skipReload) {
   } catch (err) {
     console.error(err);
     btn.classList.remove('loading'); btn.disabled = false;
+    if (!skipReload) unlockUI();
     showToast('Could not save. Please try again.', 'error');
   }
 }
 
 async function confirmAll() {
+  if (isProcessing) { showToast('Please wait, another action is in progress', 'info'); return; }
   const pending = products.map((_,i) => i).filter(i => !confirmed.has(i));
   if (!pending.length) return;
+  lockUI();
   const btn = document.getElementById('confirmAllBtn');
   btn.disabled = true; btn.innerHTML = 'Saving...';
-  // pass skipReload=true — reload only once after all are done
   for (const i of pending) { await confirmProduct(i, true); await new Promise(r => setTimeout(r, 300)); }
-  await loadProducts(); // single reload after all confirmed
+  await loadProducts(); // single reload — new cards start unlocked naturally
 }
 
 function updateProgress() {
@@ -788,6 +817,7 @@ function showAllConfirmed() {
 let mediaRecorder = null, audioChunks = [], recordingFor = null, recordingStart = 0, timerInterval = null;
 
 async function toggleRecording(i) {
+  if (isProcessing) { showToast('Please wait, another action is in progress', 'info'); return; }
   if (confirmed.has(i)) { showToast('Product already confirmed', 'info'); return; }
   if (recordingFor === i) { stopRecording(i); return; }
   if (recordingFor !== null) { showToast('Already recording another product', 'error'); return; }
