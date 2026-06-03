@@ -900,13 +900,21 @@ function applyVoiceUpdates(i, result) {
   set('type',         'type');
   set('color',        'color');
   if (result.size && String(result.size).trim()) {
-    const num = String(result.size).trim().match(/^[\d.]+/)?.[0] || String(result.size).trim();
-    const el  = document.getElementById('size-' + i);
-    if (el) { el.value = num; el.classList.add('ai-updated','changed'); products[i].size = num; updated.push('size'); }
-  }
-  if (result.size_unit && String(result.size_unit).trim()) {
-    const el = document.getElementById('unit-' + i);
-    if (el) { el.value = result.size_unit; el.classList.add('ai-updated','changed'); products[i].size_unit = result.size_unit; updated.push('size_unit'); }
+    const raw     = String(result.size).trim();
+    const match   = raw.match(/^([\d.]+)\s*([a-zA-Z]*)$/);
+    const num     = match ? match[1] : (raw.match(/^[\d.]+/)?.[0] || raw);
+    const unitRaw = (result.size_unit && String(result.size_unit).trim())
+                      ? String(result.size_unit).trim()
+                      : (match && match[2] ? match[2].trim() : '');
+    const elSize = document.getElementById('size-' + i);
+    if (elSize && num) { elSize.value = num; elSize.classList.add('ai-updated','changed'); products[i].size = num; updated.push('size'); }
+    if (unitRaw) {
+      const elUnit = document.getElementById('unit-' + i);
+      if (elUnit) { elUnit.value = unitRaw; elUnit.classList.add('ai-updated','changed'); products[i].size_unit = unitRaw; updated.push('size_unit'); }
+    }
+  } else if (result.size_unit && String(result.size_unit).trim()) {
+    const elUnit = document.getElementById('unit-' + i);
+    if (elUnit) { elUnit.value = result.size_unit; elUnit.classList.add('ai-updated','changed'); products[i].size_unit = result.size_unit; updated.push('size_unit'); }
   }
   set('price', 'price');
   if (result.price_unit && String(result.price_unit).trim()) {
