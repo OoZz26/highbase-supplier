@@ -274,8 +274,10 @@ header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.92
       </div>
     </div>
   </div>
+  <div class="cards-wrap" id="cardsList"></div>
+</div>
 
-  <div class="action-bar" id="actionBar">
+<div class="action-bar" id="actionBar">
     <div class="action-bar-label">Confirmation page — your submitted products</div>
     <div class="action-btns">
       <button class="action-btn copy-btn" onclick="copyStoreLink()">
@@ -295,9 +297,6 @@ header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.92
         <div class="action-btn-text"><div class="action-btn-title">Manage my HB orders</div><div class="action-btn-sub">Branch order mgmt page</div></div>
       </a>
     </div>
-  </div>
-
-  <div class="cards-wrap" id="cardsList"></div>
 </div>
 
 <div class="bottom-bar" id="bottomBar" style="display:none;">
@@ -420,6 +419,10 @@ async function loadProducts() {
         p.price = parseFloat(p.price).toFixed(3);
       }
     });
+
+    // Show last-to-first so deleting from the top doesn't shift lower row numbers
+    products.reverse();
+    confirmed = new Set();
 
     hide('loadingScreen');
     if (products.length === 0) { show('emptyScreen'); return; }
@@ -626,14 +629,9 @@ async function deleteProduct(i) {
     console.warn('Delete webhook failed (removing from UI anyway):', err);
   }
 
-  // Remove from UI regardless of webhook result
-  products.splice(i, 1);
-  const nc = new Set();
-  confirmed.forEach(idx => { if (idx < i) nc.add(idx); else if (idx > i) nc.add(idx-1); });
-  confirmed = nc;
-  renderCards(); updateProgress();
+  // Remove from UI — reload fresh from server
   showToast('Product removed', 'info');
-  if (products.length === 0) { hide('mainContent'); hide('bottomBar'); show('emptyScreen'); }
+  await loadProducts();
 }
 
 async function requestNewLink() {
@@ -733,11 +731,9 @@ async function confirmProduct(i) {
 
     if (!res.ok) throw new Error(res.status);
 
-    confirmed.add(i);
-    document.getElementById('card-' + i).classList.add('confirmed');
-    updateProgress();
-    showToast(p.product_name + ' saved', 'success');
-    if (confirmed.size === products.length) setTimeout(showAllConfirmed, 800);
+    const productName = p.product_name;
+    showToast(productName + ' saved', 'success');
+    await loadProducts();
 
   } catch (err) {
     console.error(err);
@@ -768,6 +764,7 @@ function updateProgress() {
 
 function showAllConfirmed() {
   hide('mainContent'); hide('bottomBar');
+  initActionBar(); // keep 4 buttons visible on success screen
   document.getElementById('successList').innerHTML = products.map((p, idx) => {
     const sn  = document.getElementById('size-'     + idx) ? document.getElementById('size-'     + idx).value : p.size;
     const su  = document.getElementById('unit-'     + idx) ? document.getElementById('unit-'     + idx).value : p.size_unit;
