@@ -448,7 +448,8 @@ async function loadProducts() {
 
     // Show last-to-first so deleting from the top doesn't shift lower row numbers
     products.reverse();
-    confirmed = new Set();
+    confirmed      = new Set();
+    isProcessing   = false; // unlock after any webhook completes and page reloads
 
     hide('loadingScreen');
     hide('mainContent');
