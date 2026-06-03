@@ -377,7 +377,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const nowSec     = Math.floor(Date.now() / 1000);
   const ageMinutes = Math.floor((nowSec - payload.iat) / 60);
   if (ageMinutes > 30) {
-    // Extract phone from expired token so we can request a new link
     chatId         = String(payload.PhoneNumber || '');
     expiredPayload = payload;
     showError('This link has expired (' + ageMinutes + ' minutes old). Click below to get a new one.');
@@ -385,7 +384,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Extract from JWT payload — all single = signs
   chatId         = String(payload.PhoneNumber    || '');
   branchId       = String(payload.BranchID       || '');
   branchSlug     = String(payload.BranchSlug     || '');
@@ -393,13 +391,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!chatId) { showError('Could not read supplier ID from link. Please ask Highbase to resend the link.'); return; }
 
-  initActionBar(); // show 4 buttons immediately after login regardless of product state
+  initActionBar();
   loadProducts();
 });
 
 // ── Load ──────────────────────────────────────────────────────────────────
 async function loadProducts() {
-  isProcessing = false; // always reset lock when page reloads
+  unlockUI(); // FIX: was "isProcessing = false" — unlockUI() also clears inline disabled/pointerEvents
+              // on persistent elements like #confirmAllBtn that survive across re-renders
   try {
     const res  = await fetch(WEBHOOK_GET + '?chat_id=' + encodeURIComponent(chatId), {
       headers: { 'Authorization': 'Bearer ' + token }
@@ -447,10 +446,8 @@ async function loadProducts() {
       }
     });
 
-    // Show last-to-first so deleting from the top doesn't shift lower row numbers
     products.reverse();
-    confirmed      = new Set();
-    isProcessing   = false; // unlock after any webhook completes and page reloads
+    confirmed = new Set();
 
     hide('loadingScreen');
     hide('mainContent');
@@ -472,7 +469,7 @@ async function loadProducts() {
 
   } catch (err) {
     console.error('Load error:', err);
-    isProcessing = false; // always unlock on any failure
+    unlockUI(); // FIX: was "isProcessing = false" — use unlockUI() for consistency
     showError('Could not connect: ' + (err.message || err));
   }
 }
@@ -530,14 +527,13 @@ function makeCard(p, i) {
   const imgHtml   = safeImage ? '<img src="' + esc(safeImage) + '" alt="' + esc(p.product_name) + '" id="img-' + i + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' : '';
   const fbStyle   = safeImage ? 'style="display:none"' : '';
 
-  const unitOptions     = UNITS.map(u => '<option value="' + u + '" ' + (p.size_unit === u ? 'selected' : '') + '>' + u + '</option>').join('');
+  const unitOptions = UNITS.map(u => '<option value="' + u + '" ' + (p.size_unit === u ? 'selected' : '') + '>' + u + '</option>').join('');
 
-  // Currency: only branch currency + product currency (if different)
   const allowedCurrencies = [branchCurrency || 'BD'];
   if (p.price_unit && p.price_unit !== (branchCurrency || 'BD')) allowedCurrencies.push(p.price_unit);
   const currencyOptions = allowedCurrencies.map(c => '<option value="' + c + '" ' + (p.price_unit === c ? 'selected' : '') + '>' + c + '</option>').join('');
 
-  const countryOptions  = COUNTRIES.map(c => '<option value="' + c + '" ' + (p.Origin === c ? 'selected' : '') + '>' + c + '</option>').join('');
+  const countryOptions = COUNTRIES.map(c => '<option value="' + c + '" ' + (p.Origin === c ? 'selected' : '') + '>' + c + '</option>').join('');
 
   const fullSize  = p.size && p.size_unit ? p.size + ' ' + p.size_unit : (p.size || '');
   const priceChip = p.price ? p.price + ' ' + (p.price_unit || branchCurrency || 'BD') : '';
@@ -794,7 +790,7 @@ async function confirmAll() {
   const btn = document.getElementById('confirmAllBtn');
   btn.disabled = true; btn.innerHTML = 'Saving...';
   for (const i of pending) { await confirmProduct(i, true); await new Promise(r => setTimeout(r, 300)); }
-  await loadProducts(); // single reload — new cards start unlocked naturally
+  await loadProducts(); // single reload — unlockUI() called at top of loadProducts()
 }
 
 function updateProgress() {
@@ -809,7 +805,7 @@ function updateProgress() {
 
 function showAllConfirmed() {
   hide('mainContent'); hide('bottomBar');
-  initActionBar(); // keep 4 buttons visible on success screen
+  initActionBar();
   document.getElementById('successList').innerHTML = products.map((p, idx) => {
     const sn  = document.getElementById('size-'     + idx) ? document.getElementById('size-'     + idx).value : p.size;
     const su  = document.getElementById('unit-'     + idx) ? document.getElementById('unit-'     + idx).value : p.size_unit;
