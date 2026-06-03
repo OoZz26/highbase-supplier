@@ -369,6 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!chatId) { showError('Could not read supplier ID from link. Please ask Highbase to resend the link.'); return; }
 
+  initActionBar(); // show 4 buttons immediately after login regardless of product state
   loadProducts();
 });
 
@@ -378,7 +379,8 @@ async function loadProducts() {
     const res  = await fetch(WEBHOOK_GET + '?chat_id=' + encodeURIComponent(chatId), {
       headers: { 'Authorization': 'Bearer ' + token }
     });
-    const data = await res.json();
+    const text = await res.text();
+    const data = text.trim() ? JSON.parse(text) : [];
     const rows = Array.isArray(data) ? data : [data];
 
     products = rows.filter(r => r && (r['Product Name'] || r.product_name)).map(r => {
@@ -425,7 +427,14 @@ async function loadProducts() {
     confirmed = new Set();
 
     hide('loadingScreen');
-    if (products.length === 0) { show('emptyScreen'); return; }
+    hide('mainContent');
+    hide('bottomBar');
+    if (products.length === 0) {
+      document.querySelector('#emptyScreen h2').textContent = 'No products to review';
+      document.querySelector('#emptyScreen p').textContent  = 'All confirmed! Send more products via WhatsApp to add them here.';
+      show('emptyScreen');
+      return;
+    }
 
     document.getElementById('productCount').textContent =
       products.length + ' product' + (products.length !== 1 ? 's' : '');
@@ -663,7 +672,7 @@ async function requestNewLink() {
   }
 }
 
-async function confirmProduct(i) {
+async function confirmProduct(i, skipReload) {
   const card = document.getElementById('card-' + i);
   if (card.querySelectorAll('input.invalid').length > 0) { showToast('Please fix validation errors first', 'error'); return; }
 
@@ -733,7 +742,7 @@ async function confirmProduct(i) {
 
     const productName = p.product_name;
     showToast(productName + ' saved', 'success');
-    await loadProducts();
+    if (!skipReload) await loadProducts();
 
   } catch (err) {
     console.error(err);
@@ -747,9 +756,9 @@ async function confirmAll() {
   if (!pending.length) return;
   const btn = document.getElementById('confirmAllBtn');
   btn.disabled = true; btn.innerHTML = 'Saving...';
-  for (const i of pending) { await confirmProduct(i); await new Promise(r => setTimeout(r, 300)); }
-  btn.disabled = false;
-  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Confirm all';
+  // pass skipReload=true — reload only once after all are done
+  for (const i of pending) { await confirmProduct(i, true); await new Promise(r => setTimeout(r, 300)); }
+  await loadProducts(); // single reload after all confirmed
 }
 
 function updateProgress() {
