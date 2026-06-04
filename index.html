@@ -70,6 +70,7 @@ header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.92
 .product-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow-sm); transition: border-color .25s, box-shadow .25s, transform .25s; animation: fadeUp .4s ease both; min-width: 0; width: 100%; }
 .product-card:hover { box-shadow: var(--shadow); border-color: var(--primary-soft); }
 .product-card.confirmed { border-color: rgba(22,163,74,.3); background: linear-gradient(180deg, rgba(220,252,231,.25) 0%, var(--card) 100%); }
+.product-card.pending   { border-color: rgba(217,119,6,.35);  background: linear-gradient(180deg, rgba(254,243,199,.35) 0%, var(--card) 100%); }
 .product-card:nth-child(1){animation-delay:.05s} .product-card:nth-child(2){animation-delay:.10s} .product-card:nth-child(3){animation-delay:.15s} .product-card:nth-child(4){animation-delay:.20s} .product-card:nth-child(5){animation-delay:.25s} .product-card:nth-child(6){animation-delay:.30s}
 
 .card-top { display: grid; grid-template-columns: 110px 1fr; gap: 0; border-bottom: 1px solid var(--border-soft); }
@@ -92,8 +93,11 @@ header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.92
 .card-summary { display: flex; flex-wrap: wrap; gap: 6px; }
 .summary-chip { font-size: 11px; font-weight: 500; background: var(--surface); color: var(--ink-2); padding: 4px 10px; border-radius: var(--r-pill); border: 1px solid var(--border-soft); display: inline-flex; align-items: center; gap: 4px; }
 .confirmed-tag { display: none; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--success); background: var(--success-lt); padding: 5px 12px; border-radius: var(--r-pill); margin-top: 8px; width: fit-content; }
+.pending-tag   { display: none; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--warning); background: var(--warning-lt); padding: 5px 12px; border-radius: var(--r-pill); margin-top: 8px; width: fit-content; }
 .product-card.confirmed .confirmed-tag { display: inline-flex; }
-.product-card.confirmed .card-summary { display: none; }
+.product-card.pending   .pending-tag   { display: inline-flex; }
+.product-card.confirmed .card-summary  { display: none; }
+.product-card.pending   .card-summary  { display: none; }
 
 .card-fields { padding: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .field-full { grid-column: 1 / -1; }
@@ -109,6 +113,7 @@ header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.92
 .field-error { font-size: 11px; color: var(--danger); margin-top: -2px; display: none; }
 .field input.invalid + .field-error { display: block; }
 .product-card.confirmed .field input, .product-card.confirmed .field select { background: var(--surface); pointer-events: none; color: var(--ink-3); }
+.product-card.pending   .field input, .product-card.pending   .field select { background: var(--surface); pointer-events: none; color: var(--ink-3); }
 
 .card-actions { padding: 0 18px 18px; display: flex; gap: 10px; }
 .btn { font-family: var(--font-body); font-size: 13px; font-weight: 600; border: none; border-radius: var(--r-sm); padding: 11px 18px; cursor: pointer; transition: all .2s; outline: none; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
@@ -120,12 +125,21 @@ header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.92
 .btn-primary.loading .btn-text { display: none; }
 .btn-primary .btn-spinner { display: none; width: 15px; height: 15px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; }
 .btn-primary.loading .btn-spinner { display: block; }
-.btn-saved { flex: 1; justify-content: center; background: var(--success-lt); color: var(--success); border: 1px solid rgba(22,163,74,.2); cursor: default; display: none; }
+.btn-saved    { flex: 1; justify-content: center; background: var(--success-lt); color: var(--success); border: 1px solid rgba(22,163,74,.2); cursor: default; display: none; }
+.btn-pending  { flex: 1; justify-content: center; background: var(--warning-lt); color: var(--warning); border: 1px solid rgba(217,119,6,.25); cursor: default; display: none; font-family: var(--font-body); font-size: 13px; font-weight: 600; border-radius: var(--r-sm); padding: 11px 18px; align-items: center; gap: 7px; white-space: nowrap; }
 .product-card.confirmed .btn-primary { display: none; }
 .product-card.confirmed .btn-saved   { display: flex; }
 .product-card.confirmed .btn-mic     { display: none; }
+.product-card.confirmed .btn-pending { display: none; }
 .product-card.confirmed .image-overlay { display: none; }
 .product-card.confirmed .image-input { pointer-events: none; }
+.product-card.pending   .btn-primary { display: none; }
+.product-card.pending   .btn-pending { display: flex; }
+.product-card.pending   .btn-mic     { display: none; }
+.product-card.pending   .btn-saved   { display: none; }
+.product-card.pending   .btn-delete  { display: none; }
+.product-card.pending   .image-overlay { display: none; }
+.product-card.pending   .image-input { pointer-events: none; }
 .btn-delete { background: transparent; border: 1px solid var(--border); color: var(--ink-3); border-radius: var(--r-sm); width: 28px; height: 28px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .2s; flex-shrink: 0; }
 .btn-delete:hover { background: var(--danger-lt); border-color: var(--danger); color: var(--danger); }
 .product-card.confirmed .btn-delete { display: none; }
@@ -559,6 +573,7 @@ function makeCard(p, i) {
           (p.Origin  ? '<span class="summary-chip">' + esc(p.Origin)  + '</span>' : '') +
         '</div>' +
         '<div class="confirmed-tag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Confirmed & saved</div>' +
+        '<div class="pending-tag"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Received — team will add shortly</div>' +
       '</div>' +
     '</div>' +
     '<div class="card-fields">' +
@@ -584,6 +599,7 @@ function makeCard(p, i) {
       '<button class="btn btn-mic" id="mic-' + i + '" onclick="toggleRecording(' + i + ')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="mic-spinner"></div></button>' +
       '<button class="btn btn-primary" id="btn-' + i + '" onclick="confirmProduct(' + i + ')"><span class="btn-text"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Confirm product</span><div class="btn-spinner"></div></button>' +
       '<button class="btn btn-saved"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Saved</button>' +
+      '<button class="btn btn-pending"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Pending review</button>' +
     '</div>';
   return card;
 }
@@ -763,16 +779,26 @@ async function confirmProduct(i, skipReload) {
         allow_orders: document.getElementById('tog-orders-' + i).checked ? 1 : 0,
         show_price:   document.getElementById('tog-price-'  + i).checked ? 1 : 0,
         marketplace:  document.getElementById('tog-market-' + i).checked ? 1 : 0,
-        chat_id: chatId, branch_id: branchId,
+        chat_id: chatId, branch_id: branchId, branch_slug: branchSlug,
         row_number: p.row_number, confirmed_at: new Date().toISOString()
       })
     });
 
     if (!res.ok) throw new Error(res.status);
 
+    const resData     = await res.json();
     const productName = p.product_name;
-    showToast(productName + ' saved', 'success');
-    if (!skipReload) await loadProducts();
+    if (resData.manual) {
+      // Product went to manual path — lock card in pending state, don't reload
+      const cardEl = document.getElementById('card-' + i);
+      if (cardEl) cardEl.classList.add('pending');
+      showToast(productName + ' received — team will add shortly', 'info');
+      btn.classList.remove('loading');
+      if (!skipReload) unlockUI();
+    } else {
+      showToast(productName + ' saved', 'success');
+      if (!skipReload) await loadProducts();
+    }
 
   } catch (err) {
     console.error(err);
@@ -784,7 +810,7 @@ async function confirmProduct(i, skipReload) {
 
 async function confirmAll() {
   if (isProcessing) { showToast('Please wait, another action is in progress', 'info'); return; }
-  const pending = products.map((_,i) => i).filter(i => !confirmed.has(i));
+  const pending = products.map((_,i) => i).filter(i => !confirmed.has(i) && !document.getElementById('card-' + i)?.classList.contains('pending'));
   if (!pending.length) return;
   lockUI();
   const btn = document.getElementById('confirmAllBtn');
