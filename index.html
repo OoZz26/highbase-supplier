@@ -433,7 +433,7 @@ async function loadProducts() {
     const data = text.trim() ? JSON.parse(text) : [];
     const rows = Array.isArray(data) ? data : [data];
 
-    products = rows.filter(r => r && (r['Product Name'] || r.product_name) && (r.status || '').toLowerCase().trim() !== 'confirmed').map(r => {
+    products = rows.filter(r => r && (r['Product Name'] || r.product_name) && !['confirmed','deleted'].includes((r.status || '').toLowerCase().trim())).map(r => {
       const rawSize     = r.size || '';
       const rawSizeUnit = r.size_unit || '';
       let sizeNum = '', sizeUnit = '';
@@ -548,7 +548,7 @@ function renderCards() {
 
 function makeCard(p, i) {
   const card = document.createElement('div');
-  const statusClass = p.status === 'pending' ? ' pending' : (p.status === 'need_review' ? ' need-review' : '');
+  const statusClass = p.status === 'pending' ? ' pending' : '';
   card.className = 'product-card' + statusClass;
   card.id = 'card-' + i;
 
