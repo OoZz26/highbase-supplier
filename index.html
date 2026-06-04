@@ -780,7 +780,9 @@ async function confirmProduct(i, skipReload) {
         show_price:   document.getElementById('tog-price-'  + i).checked ? 1 : 0,
         marketplace:  document.getElementById('tog-market-' + i).checked ? 1 : 0,
         chat_id: chatId, branch_id: branchId, branch_slug: branchSlug,
-        row_number: p.row_number, confirmed_at: new Date().toISOString()
+        row_number: p.row_number, confirmed_at: new Date().toISOString(),
+        Date: p.Date || '', Chat_ID: p.Chat_ID || '', Chat_Number: p.Chat_Number || '',
+        barnd_id: p.brand_id || p.barnd_id || ''
       })
     });
 
