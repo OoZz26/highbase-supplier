@@ -811,19 +811,28 @@ async function confirmProduct(i, skipReload) {
     const resData     = await res.json();
     const productName = p.product_name;
     if (resData.manual) {
-      // Product went to manual path — lock card in pending state
       const cardEl = document.getElementById('card-' + i);
       if (cardEl) cardEl.classList.add('pending');
       showToast(productName + ' received — team will add shortly', 'info');
       btn.classList.remove('loading');
-      if (!skipReload) { updateProgress(); unlockUI(); }
+      updateProgress(); // always update
+      if (!skipReload) { unlockUI(); }
     } else {
-      // Always remove card from DOM regardless of skipReload
       showToast(productName + ' saved', 'success');
       const cardEl = document.getElementById('card-' + i);
       if (cardEl) cardEl.remove();
       btn.classList.remove('loading');
-      if (!skipReload) { updateProgress(); unlockUI(); }
+      updateProgress(); // always update — works for single AND confirmAll loop
+      if (!skipReload) {
+        unlockUI();
+        // Single confirm: show empty state if no actionable cards left
+        if (document.querySelectorAll('#cardsList .product-card:not(.pending)').length === 0) {
+          document.querySelector('#emptyScreen h2').textContent = 'No products to review';
+          document.querySelector('#emptyScreen p').textContent  = 'All confirmed! Send more products via WhatsApp to add them here.';
+          hide('mainContent'); hide('bottomBar');
+          show('emptyScreen');
+        }
+      }
     }
 
   } catch (err) {
@@ -842,16 +851,8 @@ async function confirmAll() {
   const btn = document.getElementById('confirmAllBtn');
   btn.disabled = true; btn.innerHTML = 'Saving...';
   for (const i of pending) { await confirmProduct(i, true); await new Promise(r => setTimeout(r, 300)); }
-  // All done — update progress and unlock
-  updateProgress();
-  unlockUI();
-  const nonPending = document.querySelectorAll('#cardsList .product-card:not(.pending)').length;
-  if (nonPending === 0) {
-    document.querySelector('#emptyScreen h2').textContent = 'No products to review';
-    document.querySelector('#emptyScreen p').textContent  = 'All confirmed! Send more products via WhatsApp to add them here.';
-    hide('mainContent'); hide('bottomBar');
-    show('emptyScreen');
-  }
+  // Reload once after all confirmations — gets fresh status from server
+  await loadProducts();
 }
 
 function updateProgress() {
