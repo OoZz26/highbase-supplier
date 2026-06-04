@@ -698,7 +698,7 @@ async function deleteProduct(i) {
   showToast('Product removed', 'info');
   updateProgress();
   unlockUI();
-  if (document.querySelectorAll('#cardsList .product-card:not(.pending)').length === 0 && document.querySelectorAll('#cardsList .product-card').length === document.querySelectorAll('#cardsList .product-card.pending').length) {
+  if (document.querySelectorAll('#cardsList .product-card:not(.pending)').length === 0) {
     document.querySelector('#emptyScreen h2').textContent = 'No products to review';
     document.querySelector('#emptyScreen p').textContent  = 'All confirmed! Send more products via WhatsApp to add them here.';
     hide('mainContent'); hide('bottomBar');
@@ -818,21 +818,12 @@ async function confirmProduct(i, skipReload) {
       btn.classList.remove('loading');
       if (!skipReload) { updateProgress(); unlockUI(); }
     } else {
+      // Always remove card from DOM regardless of skipReload
       showToast(productName + ' saved', 'success');
-      if (!skipReload) {
-        // Remove card from DOM instantly — no reload needed
-        const cardEl = document.getElementById('card-' + i);
-        if (cardEl) cardEl.remove();
-        updateProgress();
-        unlockUI();
-        // If all gone, show empty state
-        if (document.querySelectorAll('#cardsList .product-card:not(.pending)').length === 0 && document.querySelectorAll('#cardsList .product-card').length === document.querySelectorAll('#cardsList .product-card.pending').length) {
-          document.querySelector('#emptyScreen h2').textContent = 'No products to review';
-          document.querySelector('#emptyScreen p').textContent  = 'All confirmed! Send more products via WhatsApp to add them here.';
-          hide('mainContent'); hide('bottomBar');
-          show('emptyScreen');
-        }
-      }
+      const cardEl = document.getElementById('card-' + i);
+      if (cardEl) cardEl.remove();
+      btn.classList.remove('loading');
+      if (!skipReload) { updateProgress(); unlockUI(); }
     }
 
   } catch (err) {
@@ -851,11 +842,11 @@ async function confirmAll() {
   const btn = document.getElementById('confirmAllBtn');
   btn.disabled = true; btn.innerHTML = 'Saving...';
   for (const i of pending) { await confirmProduct(i, true); await new Promise(r => setTimeout(r, 300)); }
-  // No reload — cards already removed from DOM by confirmProduct(i, true)
-  // Update progress once at the end and unlock
+  // All done — update progress and unlock
   updateProgress();
   unlockUI();
-  if (document.querySelectorAll('#cardsList .product-card:not(.pending)').length === 0 && document.querySelectorAll('#cardsList .product-card').length === document.querySelectorAll('#cardsList .product-card.pending').length) {
+  const nonPending = document.querySelectorAll('#cardsList .product-card:not(.pending)').length;
+  if (nonPending === 0) {
     document.querySelector('#emptyScreen h2').textContent = 'No products to review';
     document.querySelector('#emptyScreen p').textContent  = 'All confirmed! Send more products via WhatsApp to add them here.';
     hide('mainContent'); hide('bottomBar');
